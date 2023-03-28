@@ -13,10 +13,15 @@ from django.db.models import Q
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
+from rest_framework.views import APIView
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from core.models import Snapshot
 from core.forms import AddLinkForm
-
+from ..main import add
 from ..config import (
     OUTPUT_DIR,
     PUBLIC_INDEX,
@@ -29,7 +34,22 @@ from ..config import (
 from ..main import add
 from ..util import base_url, ansi_to_html
 from ..search import query_search_index
+from rest_framework_simplejwt.authentication import JWTAuthentication
+import csv
 
+
+class CsvUploadView(APIView):
+    parser_classes = [FileUploadParser]
+    authentication_classes = [JSONWebTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        csv_file = request.data['file']
+        csv_data = csv.DictReader(line.decode('utf-8') for line in csv_file)
+
+        urls = csv_data.get('urls')
+        add(urls)
+        return Response(status=status.HTTP_201_CREATED)
 
 class HomepageView(View):
     def get(self, request):
