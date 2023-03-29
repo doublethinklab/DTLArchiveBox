@@ -43,7 +43,7 @@ class ArchiveURLView(APIView):
     def post(self, request):
         url_list = request.data.get('url_list', [])
         add(url_list)
-        return Response({'message': 'URL已存檔'})
+        return Response({'message': 'URL已存檔'}, status.HTTP_201_CREATED)
 
 class CsvUploadView(APIView):
     # authentication_classes = [JSONWebTokenAuthentication]
@@ -54,10 +54,13 @@ class CsvUploadView(APIView):
 
     def post(self, request, format=None):
         csv_file = request.FILES['file']
-        csv_data = csv.DictReader(csv_file.read().decode('utf-8').splitlines())
-        urls = [row['url'] for row in csv_data]
+        try:
+            csv_data = csv.DictReader(csv_file.read().decode('utf-8').splitlines())
+        except csv.Error:
+            return Response({'status': 'error', 'message': 'File is not a valid CSV file.'}, status=status.HTTP_400_BAD_REQUEST)
+        urls = [row.get('url', '') for row in csv_data]
         add(urls)
-        return Response({'status': 'success'})
+        return Response({'status': 'success'}, status.HTTP_201_CREATED)
 
 class HomepageView(View):
     def get(self, request):
