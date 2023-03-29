@@ -33,14 +33,14 @@ from ..config import (
 from ..main import add
 from ..util import base_url, ansi_to_html
 from ..search import query_search_index
-# from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 import csv
 import io
 
 
 class ArchiveURLView(APIView):
-    # permission_classes = (IsAuthenticated,)
-
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [JSONWebTokenAuthentication]
     def post(self, request):
         url_list = request.data.get('url_list', [])
         add(url_list)
@@ -48,7 +48,7 @@ class ArchiveURLView(APIView):
 
 class CsvUploadView(APIView):
     # authentication_classes = [JSONWebTokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser]
     def get(self, request, format=None):
         return render(request, 'csv_upload.html')
