@@ -50,6 +50,8 @@ class CsvUploadView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser]
     def get(self, request, format=None):
+        if not request.user.is_authenticated and not PUBLIC_SNAPSHOTS:
+            return redirect(f'/admin/login/?next={request.path}')
         return render(request, 'csv_upload.html')
 
     def post(self, request, format=None):
