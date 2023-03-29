@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
-# from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from core.models import Snapshot
 from core.forms import AddLinkForm
@@ -33,7 +33,6 @@ from ..config import (
 from ..main import add
 from ..util import base_url, ansi_to_html
 from ..search import query_search_index
-from rest_framework_simplejwt.authentication import JWTAuthentication
 import csv
 import io
 
