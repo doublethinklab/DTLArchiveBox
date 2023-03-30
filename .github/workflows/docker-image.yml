@@ -1,0 +1,69 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main, dev ]
+
+env:
+  registry: "control.citw.io:5042"
+  reponame: "DTLArchiveBox"
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Login to private docker image registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.registry }}
+          username: ${{ secrets.DOCKER_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD}}
+
+      - name: Get Branch Name
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Semantic Versioning
+        uses: paulhatch/semantic-version@v4.0.2
+        id: versioning
+        with:
+          # The prefix to use to identify tags
+          tag_prefix: "v"
+          # A string which, if present in a git commit, indicates that a change represents a
+          # major (breaking) change, supports regular expressions wrapped with '/'
+          major_pattern: "!feat"
+          # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
+          minor_pattern: "feat"
+          # A string to determine the format of the version output
+          format: "${major}.${minor}.${patch}"
+          # Optional path to check for changes. If any changes are detected in the path the
+          # 'changed' output will true. Enter multiple paths separated by spaces.
+#          change_path: "src/my-service"
+          # Named version, will be used as suffix for name version tag
+#          namespace: my-service
+          # If this is set to true, *every* commit will be treated as a new version.
+          bump_each_commit: true
+          # If true, the body of commits will also be searched for major/minor patterns to determine the version type.
+          search_commit_body: false
+          # The output method used to generate list of users, 'csv' or 'json'.
+          user_format_type: "csv"
+
+      - name: Prepare Key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Build the Docker image and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.registry }}/doublethinklab/${{ env.reponame }}:${{ env.BRANCH }}-${{ steps.versioning.outputs.version }}
+          ssh: |
+            default=${{ env.SSH_AUTH_SOCK }}
+
+      - name: Get Image Tag
+        run: echo "${{ env.registry }}/doublethinklab/${{ env.reponame }}:${{ env.BRANCH }}-${{ steps.versioning.outputs.version }}"
