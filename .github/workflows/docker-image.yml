@@ -6,7 +6,7 @@ on:
 
 env:
   registry: "control.citw.io:5042"
-  reponame: "DTLArchiveBox"
+  reponame: "dtl-archivebox"
 
 jobs:
     build:
