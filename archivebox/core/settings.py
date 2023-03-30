@@ -50,20 +50,21 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'rest_framework',
     'rest_framework_csv',
-    'rest_framework_simplejwt',
+    # 'rest_framework_simplejwt',
+    # 'rest_framework-jwt',
     'core',
 
     'django_extensions',
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'JWT_ALGORITHM': 'ES384',
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    # ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+    # 'JWT_ALGORITHM': 'ES384',
 }
 
 
