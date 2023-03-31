@@ -108,7 +108,7 @@ RUN apt-get update -qq \
 # Install ArchiveBox Python package and its dependencies
 WORKDIR "$CODE_DIR"
 ADD . "$CODE_DIR"
-RUN pip install -e '.[dev]'
+RUN pip install -e '.[dev]' && pip install -e .
 
 # Setup ArchiveBox runtime config
 WORKDIR "$DATA_DIR"

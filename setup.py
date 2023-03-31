@@ -68,7 +68,7 @@ EXTRAS_REQUIRE = {
         "django-debug-toolbar",
         "djangorestframework",
         "djangorestframework-csv",
-        # "djangorestframework-jwt",
+        "djangorestframework-jwt",
         "djdt_flamegraph",
     ],
 }

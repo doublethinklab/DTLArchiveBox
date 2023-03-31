@@ -16,7 +16,7 @@ services:
         image: control.citw.io:5042/doublethinklab/dtl-archivebox:dev-0.114.1
         command: server --quick-init 0.0.0.0:8000
         ports:
-            - 443:8000
+            - 8000:8000
         environment:
             - ALLOWED_HOSTS=*                   # add any config options you want as env vars
             - MEDIA_MAX_SIZE=750m
