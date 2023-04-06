@@ -16,7 +16,7 @@
 # Archivebox](https://github.com/ArchiveBox/ArchiveBox#archivebox-development).
 
 
-FROM python:3.11-slim-bullseye
+FROM python:3.10.8-slim
 
 LABEL name="archivebox" \
     maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
@@ -108,7 +108,7 @@ RUN apt-get update -qq \
 # Install ArchiveBox Python package and its dependencies
 WORKDIR "$CODE_DIR"
 ADD . "$CODE_DIR"
-RUN pip install -e '.[dev]' && pip install -e .
+RUN pip install -e .
 
 # Setup ArchiveBox runtime config
 WORKDIR "$DATA_DIR"
