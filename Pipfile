@@ -12,3 +12,5 @@ djangorestframework-jwt = "*"
 [dev-packages]
 # see setup.py for dev package dependency list
 "e1839a8" = {path = ".", extras = ["dev"], editable = true}
+djangorestframework = "*"
+djangorestframework-jwt = "*"
