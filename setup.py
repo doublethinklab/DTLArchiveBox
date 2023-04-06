@@ -45,7 +45,8 @@ INSTALL_REQUIRES = [
     "python-crontab>=2.5.1",
     "croniter>=0.3.34",
     "w3lib>=1.22.0",
-    "ipython>5.0.0",
+    "djangorestframework",
+    "djangorestframework-jwt",
 ]
 EXTRAS_REQUIRE = {
     'sonic': [
@@ -53,16 +54,16 @@ EXTRAS_REQUIRE = {
     ],
     'dev': [
         "setuptools",
-        "twine",
-        "wheel",
-        "flake8",
+        # "twine",
+        # "wheel",
+        # "flake8",
         "ipdb",
-        "mypy",
+        # "mypy",
         "django-stubs",
-        "sphinx",
-        "sphinx-rtd-theme",
+        # "sphinx",
+        # "sphinx-rtd-theme",
         "recommonmark",
-        "pytest",
+        # "pytest",
         "bottle",
         "stdeb",
         "django-debug-toolbar",
