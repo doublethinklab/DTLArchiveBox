@@ -15,7 +15,7 @@
 # Read more about [developing
 # Archivebox](https://github.com/ArchiveBox/ArchiveBox#archivebox-development).
 
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bullseye AS build
 
 LABEL name="archivebox" \
     maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
@@ -24,7 +24,7 @@ LABEL name="archivebox" \
     documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
 
 # System-level base config
-ENV TZ=UTC \
+ENV TZ=UTC-8 \
     LANGUAGE=en_US:en \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
@@ -54,7 +54,7 @@ RUN apt-get update -qq \
 # Install apt dependencies
 RUN apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        wget curl chromium git ffmpeg youtube-dl ripgrep \
+        chromium git ffmpeg youtube-dl ripgrep \
         fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto fonts-freefont-ttf \
     && ln -s /usr/bin/chromium /usr/bin/chromium-browser \
     && rm -rf /var/lib/apt/lists/*
@@ -110,6 +110,37 @@ ADD . "$CODE_DIR"
 RUN pip install -e .
 
 # Setup ArchiveBox runtime config
+# Open up the interfaces to the outside world
+# Optional:
+# HEALTHCHECK --interval=30s --timeout=20s --retries=15 \
+#     CMD curl --silent 'http://localhost:8000/admin/login/' || exit 1
+FROM python:3.11-slim-bullseye
+ENV TZ=UTC-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
+    PYTHONIOENCODING=UTF-8 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+
+ENV CODE_DIR=/app \
+    VENV_PATH=/venv \
+    DATA_DIR=/data \
+    NODE_DIR=/node \
+    ARCHIVEBOX_USER="archivebox"
+
+# Create non-privileged user for archivebox and chrome
+RUN groupadd --system $ARCHIVEBOX_USER \
+    && useradd --system --create-home --gid $ARCHIVEBOX_USER --groups audio,video $ARCHIVEBOX_USER
+
+COPY --from=build /app /app
+COPY --from=build /usr/local/bin/ /usr/local/bin/
+COPY --from=build /usr/local/lib/ /usr/local/lib/
+COPY --from=build /usr/bin /usr/bin
+COPY --from=build /usr/sbin/gosu /usr/sbin/gosu
+COPY --from=build /node /node
+
 WORKDIR "$DATA_DIR"
 ENV IN_DOCKER=True \
     CHROME_SANDBOX=False \
@@ -121,18 +152,14 @@ ENV IN_DOCKER=True \
     USE_MERCURY=True \
     MERCURY_BINARY="$NODE_DIR/node_modules/.bin/mercury-parser" \
     YOUTUBEDL_BINARY="yt-dlp"
-
+RUN apt-get update && apt-get install -qq -y curl wget
 # Print version for nice docker finish summary
-# RUN archivebox version
+RUN archivebox version
 RUN /app/bin/docker_entrypoint.sh archivebox version
 
-# Open up the interfaces to the outside world
+
 VOLUME "$DATA_DIR"
 EXPOSE 8000
-
-# Optional:
-# HEALTHCHECK --interval=30s --timeout=20s --retries=15 \
-#     CMD curl --silent 'http://localhost:8000/admin/login/' || exit 1
 
 ENTRYPOINT ["dumb-init", "--", "/app/bin/docker_entrypoint.sh"]
 CMD ["archivebox", "server", "--quick-init", "0.0.0.0:8000"]

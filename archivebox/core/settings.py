@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'rest_framework',
-    'rest_framework_csv',
+    # 'rest_framework_csv',
     # 'rest_framework_simplejwt',
     # 'rest_framework-jwt',
     'core',
