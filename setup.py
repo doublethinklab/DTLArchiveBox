@@ -47,6 +47,7 @@ INSTALL_REQUIRES = [
     "w3lib>=1.22.0",
     "djangorestframework",
     "djangorestframework-jwt",
+    "playwright"
 ]
 EXTRAS_REQUIRE = {
     'sonic': [
