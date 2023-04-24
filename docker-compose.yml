@@ -13,9 +13,7 @@ version: '2.4'   # '3.9' or greater also works
 services:
     archivebox:
 #        build: .                              # for developers working on archivebox
-#        image: control.citw.io:5042/doublethinklab/dtl-archivebox:dev-0.114.8
-        image: dtl-archivebox-2stage
-#        image: control.citw.io:5042/doublethinklab/dtl-archivebox:py311
+        image: control.citw.io:5042/doublethinklab/dtl-archivebox:dev-0.115.1
         command: server --quick-init 0.0.0.0:8000
         ports:
             - 8000:8000
@@ -29,7 +27,7 @@ services:
             - pihole
         volumes:
             - ./data:/data
-            - ./archivebox:/app/archivebox    # for developers working on archivebox
+#            - ./archivebox:/app/archivebox    # for developers working on archivebox
 
 
     ### Optional Addons: tweak these examples as needed for your specific use case

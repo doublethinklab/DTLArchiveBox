@@ -144,7 +144,7 @@ COPY --from=build /node /node
 WORKDIR "$DATA_DIR"
 ENV IN_DOCKER=True \
     CHROME_SANDBOX=False \
-    CHROME_BINARY="/usr/bin/chromium-browser" \
+    CHROME_BINARY="chromium" \
     USE_SINGLEFILE=True \
     SINGLEFILE_BINARY="$NODE_DIR/node_modules/.bin/single-file" \
     USE_READABILITY=True \
